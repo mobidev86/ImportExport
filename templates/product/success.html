@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success</title>
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static 'js/jQuery.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+    <script src="{% static 'js/infinite.min.js' %}"></script>
+
+</head>
+<body>
+
+    {{message}}
+    {% if not page_obj %}
+        <a href="{% url 'product_list' %}"> see data</a>
+    {% else %}
+        <div class="container mt-3">
+            <a class="btn btn-primary"  href="{% url 'export_data_csv' %}">Export to csv</a>
+            <a class="btn btn-primary"  href="{% url 'export_data_xls' %}">Export to Excel</a>
+            <a class="btn btn-primary" style="float: right" href=" / "> < Go back </a><br><br>
+
+            <div>
+            <table id="data" class="table table-hover infinite-container">
+                <tr>
+                    <th>Index</th>
+                    <th>Product Name</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Brand</th>
+                    <th>Color</th>
+                    <th>Price</th>
+                    <th>Type</th>
+                </tr>
+
+                {% for data in page_obj %}
+                <tr class="infinite-item">
+                    <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
+                    <td>{{data.product_name}}</td>
+                    <td>{{data.description}}</td>
+                    <td>{{data.category}}</td>
+                    <td>{{data.brand}}</td>
+                    <td>{{data.color}}</td>
+                    <td>{{data.price}}</td>
+                    <td>{{data.type}}</td>
+                </tr>
+                {% endfor %}
+
+            </table>
+
+
+            {% if page_obj.has_next %}
+                <div class="loading" style="text-align: center;max-width: available">
+                    Load More Data ...
+                </div>
+                <a class="infinite-more-link" href="?page={{ page_obj.next_page_number }}"></a>
+            {% endif %}
+            </div>
+
+        </div>
+
+        <script>
+        $('.loading').on('mouseover',function () {
+            var infinite = new Waypoint.Infinite({
+                element: $('.infinite-container')[0],
+                onBeforePageLoad: function () {
+                    $('.loading').show();
+                },
+                onAfterPageLoad: function ($items) {
+                    $('.loading').hide();
+                }
+            });
+        })
+        </script>
+        {% endif %}
+</body>
+</html>

@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static 'js/jQuery.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+</head>
+<body>
+
+<div class="container jumbotron">
+    <div class="row">
+        <div class="col-6">
+        <h2 class="h2">Import Export Data</h2>
+        </div>
+        <div class="col-6">
+        <button type="button" class="btn btn-primary" style="float: right" onclick="location.href='{% url 'product_list' %}'">See All Data</button>
+        </div>
+    </div>
+    <hr>
+    <div>
+    <form  action="{% url 'index' %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
+        <div class="form-group">
+        <label class="form-label" for="customFile">{{form.file.label_tag }}</label>
+        <input class="form-control-file" type="file" name="file" > <br>
+        </div>
+        <br>
+        OR
+        <br>
+        <label class="form-label" for="customFile">{{form.url.label_tag}}</label>
+        <input class="form-control" type="url" name="url"><br>
+        <button id="submit_btn" type="submit" class="btn btn-primary">Upload File</button>
+        <button type="button" id="daily" class="btn btn-primary">Import Daily</button>
+        <div class="mt-2" id="daily_time" hidden>
+            Select the Time: <input id="time" type="time" name="time">
+            <button id="time_btn" type="submit" class="btn btn-primary">Upload File</button>
+        </div>
+         {% if form.non_field_errors %}
+             <div class="alert alert-danger alert-dismissible fade show" style="margin-top: 1%; width:auto;">
+                <p class="text-danger">{{form.non_field_errors}}</p>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+
+        {% endif %}
+    </form>
+
+
+    </div>
+</div>
+<script>
+    $("#daily").on('click',function (){
+
+       if ($("#daily_time").is(":hidden")){
+            $("#daily_time").removeAttr('hidden');
+            $("#submit_btn").css('visibility','hidden');
+            $("#daily_time").slideDown();
+
+       }
+       else {
+            $("#daily_time").hide();
+            $("#time").val('');
+           $("#submit_btn").css('visibility','visible');
+            $("#daily_time").slideUp();
+       }
+    });
+
+</script>
+</body>
+</html>
