@@ -16,11 +16,15 @@
 
 </head>
 <body>
+    {% if message and not page_obj %}
+        {{message}}
+    <br>
+        <a  href=" / "> < Go back </a><br><br>
+    {% elif not page_obj %}
+        No data available.
+    {% endif %}
 
-    {{message}}
-    {% if not page_obj %}
-        <a href="{% url 'product_list' %}"> see data</a>
-    {% else %}
+    {% if page_obj %}
         <div class="container mt-3">
             <a class="btn btn-primary"  href="{% url 'export_data_csv' %}">Export to csv</a>
             <a class="btn btn-primary"  href="{% url 'export_data_xls' %}">Export to Excel</a>
@@ -78,6 +82,7 @@
             });
         })
         </script>
+
         {% endif %}
 </body>
 </html>

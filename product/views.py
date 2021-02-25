@@ -1,9 +1,11 @@
 import csv
 
 import xlwt
+from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import ListView
+from django_celery_beat.models import CrontabSchedule, PeriodicTask
 
 from Import_Export.read_google_sheet import handle_url
 from product.forms import UploadFileForm
@@ -16,23 +18,23 @@ from product.tasks import handle_file_task
 
 
 def set_scheduling(hour, minute, file_id):
-    # schedule, _ = CrontabSchedule.objects.get_or_create(
-    #     minute=minute,
-    #     hour=hour,
-    #     day_of_week='*',
-    #     day_of_month='*',
-    #     month_of_year='*',
-    #     timezone='Asia/Kolkata'
-    # )
+    schedule, _ = CrontabSchedule.objects.get_or_create(
+        minute=minute,
+        hour=hour,
+        day_of_week='*',
+        day_of_month='*',
+        month_of_year='*',
+        timezone='Asia/Kolkata'
+    )
 
-    handle_file_task.delay(id=file_id)
+    # handle_file_task.delay(file_id)
 
-    # PeriodicTask.objects.create(
-    #     crontab=schedule,
-    #     name="Import data daily",
-    #     task='product.tasks.handle_file_task',
-    #     # args=[json.dumps(file_name)]
-    # )
+    PeriodicTask.objects.create(
+        crontab=schedule,
+        name="Import data daily",
+        task='product.tasks.handle_file_task',
+        args=([file_id, ])
+    )
 
 
 def index(request):
